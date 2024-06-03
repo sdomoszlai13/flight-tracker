@@ -114,6 +114,29 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
 
+  autoheal:
+    image: willfarrell/autoheal:latest
+    tty: true
+    container_name: autoheal
+    restart: unless-stopped
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    tty: true
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      - TZ=${FEEDER_TZ}
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=86400
+      - WATCHTOWER_ROLLING_RESTART=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
   influxdb_config:
   influxdb_data:
